@@ -7,6 +7,14 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+# Create Container Registry
+resource "azurerm_container_registry" "acr" {
+  name                = "${var.prefix}azuretemplateregistry"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Standard"
+}
+
 resource "azurerm_virtual_network" "vn" {
   name                = "${var.prefix}-azuretemplateVnet"
   location            = azurerm_resource_group.rg.location
