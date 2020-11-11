@@ -1,4 +1,10 @@
 provider "azurerm" {
+  version         = "=2.5.0"
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+
   features {}
 }
 
@@ -33,7 +39,7 @@ resource "azurerm_subnet" "subnet" {
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.prefix}-azuretemplateaks"
   location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.iame
   dns_prefix          = "azuretemplate-dns-prefix"
 
   default_node_pool {
@@ -50,6 +56,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "kubenet"
     load_balancer_sku = "Standard"
+  }
+
+  service_principal {
+    client_id     = var.client_id
+    client_secret = var.client_secret
   }
 }
 
