@@ -33,7 +33,7 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   address_prefix       = "192.168.1.0/24"
   virtual_network_name = azurerm_virtual_network.vn.name
-  service_endpoints    = "Microsoft.Sql"
+  service_endpoints    = ["Microsoft.Sql"]
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
