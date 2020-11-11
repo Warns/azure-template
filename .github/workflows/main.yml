@@ -39,4 +39,68 @@ jobs:
           docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/azuretemplate:$ {{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/azuretemplate:$ {{ github.sha }}
 
-      
+  terraform:
+    name: 'Terraform'
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Add env variables for service principal
+    env:
+      TF_LOG: TRACE
+      TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+
+    steps:
+      - name: 'Terraform Setup'
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: $ {{ secrets.TF_API_TOKEN }}
+      - name: 'Terraform Init'
+        run: terraform init ./terraform
+      - name: 'Terraform Format'
+        run: terraform fmt -check ./terraform
+      - name: 'Terraform Plan'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          client_id: ${{ secrets.ARM_CLIENT_ID }}
+          client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          tenant_id: ${{ secrets.ARM_TENANT_ID }}
+        run: terraform plan ./terraform
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve ./terraform
+  staging:
+    if: github.run_id != 'refs/heads/main' &&  github.event_name == 'push'
+    needs: [terraform, buil]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: {{ secrets.RESOURCE_GROUP }}
+          cluster-name: azte-azuretemplateaks
+        id: login
+    - name: Set imagePullSecret
+      uses: azure/k8s-create-secret@v1
+      with:
+        #namespace: 'myapp'
+        container-registry-url: azteazuretemplateregistry.azurecr.io
+        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
+        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        secret-name: acr-secret
+        id: create-secret
+
+    - name: 'Deploy Kubernetes Cluster'
+      uses: Azure/k8s-deploy@v1
+      with:
+        manifests: |
+          kubernetes/deployment.yml
+        images: |
+          ${{ secrets.REGISTRY_LOGIN_SERVER }}/azuretemplate:${{ github.sha }}
+        imagepullsecrets: |
+          acr-secret
+        kubectl-version: latest
