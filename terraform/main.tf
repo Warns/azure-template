@@ -8,6 +8,15 @@ provider "azurerm" {
   features {}
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name  = azurerm_resource_group.rg.name
+    storage_account_name = "azuretemplate"
+    container_name       = "tfstate"
+    key                  = "prod.terraform.tfstate"
+  }
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = "${var.prefix}-azuretemplate-aks-resources"
   location = var.location
