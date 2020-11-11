@@ -25,7 +25,7 @@ resource "azurerm_virtual_network" "vn" {
   name                = "${var.prefix}-azuretemplateVnet"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  address_space       = ["192.168.0.0/16"]
+  address_space       = "192.168.0.0/16"
 }
 
 resource "azurerm_subnet" "subnet" {
@@ -39,7 +39,7 @@ resource "azurerm_subnet" "subnet" {
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.prefix}-azuretemplateaks"
   location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.iame
+  resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "azuretemplate-dns-prefix"
 
   default_node_pool {
