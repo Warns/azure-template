@@ -74,16 +74,16 @@ jobs:
         run: terraform apply -auto-approve ./terraform
   staging:
     if: github.run_id != 'refs/heads/main' &&  github.event_name == 'push'
-    needs: [terraform, buil]
+    needs: [terraform, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: azure/aks-set-context@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          resource-group: {{ secrets.RESOURCE_GROUP }}
-          cluster-name: azte-azuretemplateaks
-        id: login
+    - uses: actions/checkout@v2
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: azte-azuretemplateaks
+      id: login
     - name: Set imagePullSecret
       uses: azure/k8s-create-secret@v1
       with:
