@@ -60,7 +60,7 @@ jobs:
       # - name: 'Terraform Init'
       #   run: terraform init /terraform
       - name: 'Terraform Format'
-        run: terraform fmt -check ./terraform
+        run: terraform fmt -check ../terraform
       - name: 'Terraform Plan'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,10 +68,10 @@ jobs:
           client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
           subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           tenant_id: ${{ secrets.ARM_TENANT_ID }}
-        run: terraform plan ./terraform
+        run: terraform plan ../terraform
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve ./terraform
+        run: terraform apply -auto-approve ../terraform
   staging:
     if: github.run_id != 'refs/heads/main' &&  github.event_name == 'push'
     needs: [terraform, build]
