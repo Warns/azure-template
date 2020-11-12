@@ -102,7 +102,7 @@ jobs:
         manifests: |
           kubernetes/deployment.yml
         images: |
-          ${{ secrets.REGISTRY_LOGIN_SERVER }}/azuretemplate:${{ github.sha }}
+          azteregistry.azurecr.io/azuretemplate:${{ github.sha }}
         imagepullsecrets: |
           acr-secret
         kubectl-version: latest

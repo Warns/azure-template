@@ -16,7 +16,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-template
-        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/azuretemplate:${{ github.sha }}
+        image: azteregistry.azurecr.io/azuretemplate:${{ github.sha }}
         resources:
           requests:
             cpu: 100m
