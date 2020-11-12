@@ -18,7 +18,7 @@ terraform {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}-azuretemplate-aks-resources"
+  name     = azuretemplate-aks-resources
   location = var.location
 }
 
