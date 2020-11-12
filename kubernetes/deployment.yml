@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: azure-template
+  name: identity-svc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: azure-template
+      app: identity-svc
   template:
     metadata:
       labels:
-        app: azure-template
+        app: identity-svc
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: azure-template
-        image: azteregistry.azurecr.io/azuretemplate:${{ github.sha }}
+      - name: identity-svc
+        image: sociallme-acr.azurecr.io/identityservice:${{ github.sha }}
         resources:
           requests:
             cpu: 100m
@@ -27,16 +27,16 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: azure-template
-          value: "azure-template"
+        - name: identity-svc
+          value: "identity-svc"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: azure-template
+  name: identity-svc
 spec:
   type: LoadBalancer
   ports:
   - port: 80
   selector:
-    app: azure-template
+    app: identity-svc

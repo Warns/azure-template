@@ -9,23 +9,23 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}-aks-resources"
+  name     = "${var.prefix}-aks-rg"
   location = var.location
 }
 
 terraform {
   backend "azurerm" {
-    resource_group_name  = "azte-tstate-rg"
+    resource_group_name  = "sociallme-tstate-rg"
     storage_account_name = "aztetstate14043"
-    container_name       = "tstate"
-    key                  = "prodterraform.tfstate"
+    container_name       = "identitytstate"
+    key                  = "terraform.tfstate"
     access_key           = "Jmu6Hg/E5ockyuxrGTm3i44ISOHis7+YaY9LFeicfbke2mlZVxwfayzjYF+abHKeeD1NloMR2o1jE7ONljNaHg=="
   }
 }
 
 # Create Container Registry
 resource "azurerm_container_registry" "acr" {
-  name                = "${var.prefix}registry"
+  name                = "${var.prefix}-acr"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard"
@@ -51,13 +51,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.prefix}-aks"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "${var.prefix}-dns-prefix"
+  dns_prefix          = "${var.prefix}-dns"
   kubernetes_version  = "1.19.0"
 
   default_node_pool {
-    name           = "aztepool"
+    name           = "scoiallmepool"
     node_count     = 1
     vm_size        = "Standard_D2_v2"
+    os_disk_size_gb = 30
     vnet_subnet_id = azurerm_subnet.subnet.id
   }
 

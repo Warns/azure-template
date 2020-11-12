@@ -1,0 +1,29 @@
+--- 
+version: "3.7"
+services: 
+  postgres: 
+    environment: 
+      POSTGRES_HOST_AUTH_METHOD: trust
+    image: "postgres:12"
+    networks:
+      - internal
+  web: 
+    build: "."
+    container_name: identityservice
+    depends_on: 
+      - postgres
+    environment: 
+      - DEBUG=1
+      - SECRET_KEY="nypdc2*1%q=go_ot+c_-go)tsaz*y0q#zj$t*!6ij(%!n+5%4d"
+      - ALLOWED_HOSTS=["*"]
+    ports: 
+      - 80:80
+    networks:
+      - internal
+    stdin_open: true
+    tty: true
+    volumes: 
+      - "./src/:/app/"
+
+# networks:
+#   internal:

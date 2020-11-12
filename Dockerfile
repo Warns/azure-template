@@ -1,10 +1,25 @@
-##
-FROM nginx
-ENV AUTHOR=Docker
+FROM python:3.8-slim
 
-WORKDIR /usr/share/nginx/html
-COPY Hello_docker.html /usr/share/nginx/html
+
+# Set working directory
+RUN mkdir /app
+WORKDIR /app
+
+# Set environment variables
+# Prevents Python from writing pyc files to disc (equivalent to python -B option)
+ENV PYTHONDONTWRITEBYTECODE 1
+# Prevents Python from buffering stdout and stderr (equivalent to python -u option)
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update && apt-get install -y curl
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+RUN pip install django-environ
+
+COPY ./src .
 
 EXPOSE 80
 
-CMD cd /usr/share/nginx/html && sed -e s/Docker/"$AUTHOR"/ Hello_docker.html > index.html ; nginx -g 'daemon off;'
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
+
