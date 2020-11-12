@@ -52,7 +52,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.prefix}-dns-prefix"
-  kubernetes_version  = "1.18.10"
+  kubernetes_version  = "1.19.0"
 
   default_node_pool {
     name           = "aztepool"
