@@ -84,13 +84,13 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         resource-group: ${{ secrets.RESOURCE_GROUP }}
-        cluster-name: azte-azuretemplateaks
+        cluster-name: azte-aks
       id: login
     - name: Set imagePullSecret
       uses: azure/k8s-create-secret@v1
       with:
         #namespace: 'myapp'
-        container-registry-url: azteazuretemplateregistry.azurecr.io
+        container-registry-url: azteregistry.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         secret-name: acr-secret
