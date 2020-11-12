@@ -60,10 +60,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vnet_subnet_id = azurerm_subnet.subnet.id
   }
 
-  identity {
-    type = "SystemAssigned"
-  }
-
   network_profile {
     network_plugin    = "kubenet"
     load_balancer_sku = "Standard"
