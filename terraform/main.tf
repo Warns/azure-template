@@ -15,10 +15,11 @@ resource "azurerm_resource_group" "rg" {
 
 terraform {
   backend "azurerm" {
-    resource_group_name  = azurerm_resource_group.rg.name
-    storage_account_name = "azuretemplate"
-    container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    resource_group_name  = "azte-tstate-rg"
+    storage_account_name = "aztetstate14043"
+    container_name       = "tstate"
+    key                  = "prodterraform.tfstate"
+    access_key           = "Jmu6Hg/E5ockyuxrGTm3i44ISOHis7+YaY9LFeicfbke2mlZVxwfayzjYF+abHKeeD1NloMR2o1jE7ONljNaHg=="
   }
 }
 
@@ -49,10 +50,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.prefix}-aks"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "azuretemplate-dns-prefix"
+  dns_prefix          = "${var.prefix}-dns-prefix"
 
   default_node_pool {
-    name           = "azuretemplatepool"
+    name           = "${var.prefix}-pool"
     node_count     = 1
     vm_size        = "Standard_D2_v2"
     vnet_subnet_id = azurerm_subnet.subnet.id
