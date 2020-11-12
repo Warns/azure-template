@@ -8,37 +8,37 @@ provider "azurerm" {
   features {}
 }
 
+resource "azurerm_resource_group" "rg" {
+  name     = "${var.prefix}-aks-resources"
+  location = var.location
+}
+
 terraform {
   backend "azurerm" {
-    resource_group_name  = "${var.prefix}azuretemplate-aks-resources"
+    resource_group_name  = azurerm_resource_group.rg.name
     storage_account_name = "azuretemplate"
     container_name       = "tfstate"
     key                  = "prod.terraform.tfstate"
   }
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}azuretemplate-aks-resources"
-  location = var.location
-}
-
 # Create Container Registry
 resource "azurerm_container_registry" "acr" {
-  name                = "${var.prefix}azuretemplateregistry"
+  name                = "${var.prefix}-registry"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard"
 }
 
 resource "azurerm_virtual_network" "vn" {
-  name                = "${var.prefix}-azuretemplateVnet"
+  name                = "${var.prefix}-Vnet"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = ["192.168.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.prefix}-azuretemplatesubnet"
+  name                 = "${var.prefix}-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   address_prefix       = "192.168.1.0/24"
   virtual_network_name = azurerm_virtual_network.vn.name
@@ -46,7 +46,7 @@ resource "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "${var.prefix}-azuretemplateaks"
+  name                = "${var.prefix}-aks"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "azuretemplate-dns-prefix"
