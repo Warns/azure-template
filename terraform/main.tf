@@ -10,7 +10,7 @@ provider "azurerm" {
 
 terraform {
   backend "azurerm" {
-    resource_group_name  = azurerm_resource_group.rg.name
+    resource_group_name  = "${var.prefix}azuretemplate-aks-resources}"
     storage_account_name = "azuretemplate"
     container_name       = "tfstate"
     key                  = "prod.terraform.tfstate"
@@ -18,7 +18,7 @@ terraform {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = azuretemplate-aks-resources
+  name     = "${var.prefix}azuretemplate-aks-resources}"
   location = var.location
 }
 
